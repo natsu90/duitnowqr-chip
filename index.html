@@ -1,0 +1,209 @@
+<html>
+    <head>
+        <title>Dynamic DuitNow QR with CHIP</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <style>
+            .center-screen {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                min-height: 90vh;
+            }
+
+            :root{
+              --size: 300px;
+              --sizePure: 300;
+            }
+
+            .checkmark__circle {
+              stroke-dasharray: calc(var(--sizePure) * 2.964285714);
+              stroke-dashoffset: calc(var(--sizePure) * 2.964285714);
+              stroke-width: 2;
+              stroke-miterlimit: 10;
+              stroke: #7ac142;
+              fill: none;
+              animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+            }
+
+            .checkmark {
+              width: calc(var(--size) + 4px);
+              height: calc(var(--size) + 4px);
+              border-radius: 50%;
+              display: block;
+              stroke-width: 2;
+              stroke: #fff;
+              stroke-miterlimit: 2;
+              margin: 10% auto;
+              box-shadow: inset 0px 0px 0px #7ac142;
+              animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+            }
+
+            .checkmark__check {
+              transform-origin: 50% 50%;
+              stroke-dasharray: 48;
+              stroke-dashoffset: 48;
+              animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+            }
+
+            @keyframes stroke {
+              100% {
+                stroke-dashoffset: 0;
+              }
+            }
+            @keyframes scale {
+              0%, 100% {
+                transform: none;
+              }
+              50% {
+                transform: scale3d(1.1, 1.1, 1);
+              }
+            }
+            @keyframes fill {
+              100% {
+                box-shadow: inset 0px 0px 0px 800px #7ac142;
+              }
+            }
+        </style>
+    </head>
+    <body>
+        <a href="https://github.com/natsu90/duitnowqr-chip" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+        
+        <div id="app" class="center-screen">
+            <div>
+                <p>
+                  <span v-show="isLoading"><i class="fas fa-10x fa-sync fa-spin"></i></span>
+                  <img v-show="!isLoading && !isPaid" id="qr" :src="qrImage" width="300px" height="300px" />
+                  <svg v-show="!isLoading && isPaid" id="paid" class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+                </p>
+                <p>
+                  <fieldset role="group">
+                    <input type="text" disabled=true value="RM" style="max-width:70px" />
+                    <input id="amount" v-model="amount" type="text" style="max-width:150px" />
+                    <button @click="getQrImage" :disabled="amount < 1 || isLoading" style="max-width:100px">
+                      <span v-show="amountIsChanged"><i class="fa-solid fa-qrcode fa-shake"></i></span>
+                      <span v-show="!amountIsChanged"><i class="fa-solid fa-qrcode"></i></span>
+                    </button>
+                  </fieldset>
+                </p>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js" integrity="sha512-b+nQTCdtTBIRIbraqNEwsjB6UvL3UEMkXnhzd8awtCYh0Kcsjl9uEgwVFVbhoj3uu1DO1ZMacNvLoyJJiNfcvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/simple-mask-money@4.1.4/lib/simple-mask-money.umd.min.js" type="text/javascript"></script>
+        
+        <script type="text/javascript">
+
+          var app = new Vue({
+            el: '#app',
+            data: {
+              isLoading: false,
+              amount: 100, // converted to 1.00 after applying masking
+              isPaid: false,
+              qrImage: null,
+              loopChecking: null,
+              amountIsChanged: false
+            },
+            computed: {
+              qrAmount: function() {
+                return Math.round(this.amount * 100)
+              }
+            },
+            watch: {
+              amount: {
+                handler: function(newValue, oldValue) {
+                  if (newValue != oldValue) {
+                    this.amountIsChanged = true
+                  }
+                },
+                deep: false
+              }
+            },
+            methods: {
+              getQrImage: async function () {
+                this.isPaid = false
+                this.isLoading = true
+                this.amountIsChanged = false
+                this.stopCheckingPaidStatus()
+
+                const res = await fetch('/pay?' + new URLSearchParams({
+                  amount: this.qrAmount
+                }).toString())
+                const imgBlob = await res.blob()
+                const imgUrl = URL.createObjectURL(imgBlob)
+                this.qrImage = imgUrl
+
+                this.isLoading = false
+                this.startCheckingPaidStatus()
+              },
+              checkPaidStatus: async function () {
+                const res = await fetch('/status')
+                const event = await res.text()
+
+                if (event.trim() === 'purchase.paid') {
+                  this.stopCheckingPaidStatus()
+                  this.isPaid = true
+                  this.sayPaidAmount()
+                }
+              },
+              startCheckingPaidStatus: async function() {
+                const interval = 1 * 1000
+                const that = this
+                const checkPaidStatus = async function() {
+                  await that.checkPaidStatus()
+                  that.loopChecking = setTimeout(checkPaidStatus, interval)
+                }
+                checkPaidStatus()
+              },
+              stopCheckingPaidStatus: function () {
+                if (this.loopChecking) {
+                  clearTimeout(this.loopChecking)
+                }
+              },
+              sayPaidAmount: function () {
+
+                const synth = window.speechSynthesis
+                const tts = new SpeechSynthesisUtterance()
+
+                // I don't think this is necessary anymore since we know the amount beforehand
+                tts.text = 'You paid ' + this.paymentToText()
+                // tts.text = 'Thank you for your payment'
+
+                synth.speak(tts)
+              },
+              // Convert Payment Amount into Text
+              paymentToText: function() {
+                
+                const ringgitAmount = Math.floor(this.qrAmount / 100)
+                const senAmount = this.qrAmount % 100
+
+                let amountText = ringgitAmount + ' Ringgit'
+
+                if (senAmount) {
+                  amountText += ', ' + senAmount + ' Sen'
+                }
+
+                return amountText
+              }
+            },
+            // Short Polling
+            mounted: async function () {
+
+              SimpleMaskMoney.setMask('#amount', {
+                decimalSeparator: '.',
+                thousandsSeparator: ',',
+                fixed: true
+              })
+
+              await this.getQrImage()
+              
+              // after SimpleMaskMoney is applied, the initial value of 100 is updated to 1.00
+              this.amountIsChanged = false
+            }
+          })
+
+          </script>
+    </body>
+</html>
