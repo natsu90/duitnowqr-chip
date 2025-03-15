@@ -7,7 +7,7 @@ DuitNowQR advance payment validation, without any additional hardware, which I b
 
 [http://duitnow.ss.my](http://duitnow.ss.my)
 
-[![Watch the video](https://img.youtube.com/vi/20gtE4HNr5g/default.jpg)](https://youtu.be/20gtE4HNr5g)
+[![Watch the video](https://img.youtube.com/vi/20gtE4HNr5g/0.jpg)](https://youtu.be/20gtE4HNr5g)
 
 ### Prerequisites
 
