@@ -6,7 +6,6 @@ const Chip = require('Chip').default
 const cheerio = require('cheerio')
 const jsQR = require('jsqr')
 const { Jimp } = require('jimp')
-const emvqr = require('steplix-emvqr')
 var session = require('express-session')
 var FileStore = require('session-file-store')(session)
 const QRCode = require('easyqrcodejs-nodejs')
