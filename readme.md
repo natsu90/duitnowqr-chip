@@ -1,11 +1,13 @@
 
-## DuitNow QR Hardwareless Soundbox
+## DuitNowQR Hardwareless Soundbox
 
-DuitNow QR advance payment validation, without any additional hardware, which I believe should come built-in ready in every banking app.
+DuitNowQR advance payment validation, without any additional hardware, which I believe should come built-in ready in every banking app.
 
 ### Demo
 
-[http://duitnowqr.ss.my](http://duitnowqr.ss.my)
+[http://duitnow.ss.my](http://duitnow.ss.my)
+
+[![Watch the video](https://img.youtube.com/vi/20gtE4HNr5g/default.jpg)](https://youtu.be/20gtE4HNr5g)
 
 ### Prerequisites
 
