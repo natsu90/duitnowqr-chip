@@ -41,11 +41,9 @@ CHIP_API_KEY=
 
 ### Known Issues
 
-1. I'm trying to store the Public Key locally to reduce API call, but it is somehow stored incorrectly and failed to validate incoming webhook.
+1. The UI is not really mobile friendly, my frontend skill is suck, feel free to contribute.
 
-2. The UI is not really mobile friendly, my frontend skill is suck, feel free to contribute.
-
-3. I tried to use Server Sent Event (SSE) at first, instead of Short Polling, but somehow SSE doesn't work with Nginx. I'll try debug it later when I'm free.
+2. I tried to use Server Sent Event (SSE) at first, instead of Short Polling, but somehow SSE doesn't work with Nginx. I'll try debug it later when I'm free.
 
 ### License
 

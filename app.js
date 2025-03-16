@@ -14,6 +14,7 @@ const endpoint = 'https://gate.chip-in.asia/api/v1'
 const basedUrl = process.env.APP_URL
 const brandId = process.env.CHIP_BRAND_ID
 const apiKey = process.env.CHIP_API_KEY
+let webhookPublicKey
 
 const app = express()
 const port = 7001
@@ -128,7 +129,7 @@ app.get('/pay', async (req, res) => {
 app.post('/ipn', async (req, res) => {
   const { rawBody, headers } = req
   const xsignature = headers['x-signature']
-  const publicKey = JSON.parse(await getPublicKey())
+  const publicKey = webhookPublicKey
   const parsed = JSON.parse(rawBody)
 
   const verified = apiInstance.verify(rawBody, Buffer.from(xsignature, 'base64'), publicKey)
@@ -183,6 +184,12 @@ const getPublicKey = () => {
     })
   })
 }
+
+const fetchPublicKey = async() => {
+  webhookPublicKey = JSON.parse(await getPublicKey())
+}
+
+fetchPublicKey()
 
 app.listen(port, () => {
   return console.log(
