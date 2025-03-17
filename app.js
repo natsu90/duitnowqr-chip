@@ -9,6 +9,7 @@ const { Jimp } = require('jimp')
 var session = require('express-session')
 var FileStore = require('session-file-store')(session)
 const QRCode = require('easyqrcodejs-nodejs')
+const { randomUUID } = require('crypto')
 
 const endpoint = 'https://gate.chip-in.asia/api/v1'
 const basedUrl = process.env.APP_URL
@@ -22,11 +23,15 @@ const port = 7001
 app.engine('html', require('ejs').renderFile)
 app.disable('view cache')
 
-app.use(session({ secret: apiKey,
+app.use(session({
+    secret: apiKey,
     resave: false,
     saveUninitialized: false,
     store: new FileStore,
-    cookie: { maxAge: 3600000, secure: false, httpOnly: true }
+    cookie: { maxAge: 3600000, secure: false, httpOnly: true },
+    genid: function () {
+      return randomUUID()
+    }
   })
 )
 
@@ -155,9 +160,8 @@ app.post('/ipn', async (req, res) => {
 // Short Polling // Alt to SSE
 app.get('/status', (req, res) => {
 
-  let message = ''
-
-  message = req.session.message
+  const message = req.session.message
+  // clear message after retrieved
   req.session.message = ''
 
   res.send(message)
