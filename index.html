@@ -148,6 +148,7 @@
                   this.sayPaidAmount()
                 }
               },
+              // Short Polling
               startCheckingPaidStatus: async function() {
                 const interval = 1 * 1000
                 const that = this
@@ -188,7 +189,6 @@
                 return amountText
               }
             },
-            // Short Polling
             mounted: async function () {
 
               SimpleMaskMoney.setMask('#amount', {
