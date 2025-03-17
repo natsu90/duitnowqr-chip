@@ -81,7 +81,7 @@
                   <fieldset role="group">
                     <input type="text" disabled=true value="RM" style="max-width:70px" />
                     <input id="amount" v-model="amount" type="text" style="max-width:150px" />
-                    <button @click="getQrImage" :disabled="amount < 1 || isLoading" style="max-width:100px">
+                    <button @click="getQrImage" :disabled="amount < 1 || amount >= 1000 || isLoading" style="max-width:100px">
                       <span v-show="amountIsChanged"><i class="fa-solid fa-qrcode fa-shake"></i></span>
                       <span v-show="!amountIsChanged"><i class="fa-solid fa-qrcode"></i></span>
                     </button>
